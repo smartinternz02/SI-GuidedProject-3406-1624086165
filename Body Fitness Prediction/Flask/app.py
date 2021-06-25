@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 from flask import Flask, render_template, request
 import requests
 
@@ -25,13 +24,9 @@ def my_home():
 @app.route('/predict',methods=['POST'])
 def predict():
     input_features =  [float(x) for x in request.form.values()]
-    features_value = [np.array(input_features)]
-
-    payload_scoring = {"input_data": [{"field": [['sad','neutral','happy','step_count','calories_burned','hours_of_sleep','weight_kg']] , "values": [features_value]}]}
-
+    payload_scoring = {"input_data": [{"field": [['sad','neutral','happy','step_count','calories_burned','hours_of_sleep','weight_kg']] , "values": [input_features]}]}
     response_scoring = requests.post('https://us-south.ml.cloud.ibm.com/ml/v4/deployments/5a057f36-51ca-4eac-a353-6ea4721d8b6c/predictions?version=2021-06-25', json=payload_scoring, headers={'Authorization': 'Bearer ' + mltoken})
     print("Scoring response")
-    print(response_scoring.json())
     predictions=response_scoring.json()
     print(predictions)
     pred=predictions['predictions'][0]['values'][0][0]
